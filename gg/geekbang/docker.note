@@ -1,0 +1,27 @@
+george@ubu:~/tcpipillustrated/gg$ docker network ls
+NETWORK ID          NAME                DRIVER              SCOPE
+73ceee1f6b8e        bridge              bridge              local
+757c18f645c3        host                host                local
+d06bd97c131c        none                null                local
+以上是默认的。
+
+docker 创建网桥:
+docker network create my_net
+--network=
+****************************************************************************************************
+./mydocker.sh
+ovs-vsctl add-br ubuntu_br
+pipework ubuntu_br sun 192.168.1.202/24@192.168.1.1
+
+root@ubu:/home/george# ovs-vsctl show
+b397a395-1e18-4c7c-92be-2ae5ab552abb
+    Bridge ubuntu_br
+        Port ubuntu_br
+            Interface ubuntu_br
+                type: internal
+        Port "veth1pl6000"
+            Interface "veth1pl6000"
+    ovs_version: "2.9.5"
+
+ref:
+https://my.oschina.net/u/1791060/blog/826166

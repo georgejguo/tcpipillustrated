@@ -35,4 +35,5 @@ route命令输出的各列：
     Iface：表示目的地址，指定网络的数据包应该发往哪个网络接口
 
 
-ip a show enp0s8
+刘超openstack博客：
+https://blog.csdn.net/popsuper1982/category_2285255.html

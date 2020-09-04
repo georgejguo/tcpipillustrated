@@ -1,0 +1,24 @@
+
+$ sudo ifconfig eth1 10.0.0.1/24
+$ sudo ifconfig eth1 up
+$ ifconfig enp0s8
+
+$ sudo ip addr add 10.0.0.1/24 dev eth1
+$ sudo ip link set up eth1
+$ ip a show enp0s8
+
+网关要和当前的网络至少一个网卡是同一个网段的
+
+见课程吧：详解了dhcp以及pxe装机借用dhcp来下载文件, Pxe dhcp是工程师的基本素养.dhcp只会局限于一个子网
+进入BIOS设置页面，有一项PXE Boot to LAN，若设置为Enabled则表示计算机从网络启动，从PXE服务端下载配置文件和操作系统内核进行启动；若设置为Disabled则表示从本地启动，启动动BIOS后，会去寻找启动扇区，如果没有安装操作系统，就会找不到启动扇区，这个时候就启动不起来
+
+dhcp server 在哪里跑的？路由器，服务器都行，咱们家里的路由器就会默认带一个.
+一个网络中加入一个新机器，这个新机器会以 IP 地址 0.0.0.0 向整个局域网发一个广播包， DHCP server 收到后会给这个机器分配 IP ，也是以广播地址的方式。可能会有多个 DHCP server，新机器会选择第一个到达的包，然后再发一个广播包告诉大家我选了谁的，之后 DHCP server 会广播一个确认包。
+
+文章关于DHCP可能是有两处错误。DHCP Offer 和 DHCP ACK都不是广播包，而是直接发到客户机的网卡上的。这是wiki上的链接：
+https://en.wikipedia.org/wiki/Dynamic_Host_Configuration_Protocol#DHCP_offer
+https://en.wikipedia.org/wiki/Dynamic_Host_Configuration_Protocol#DHCP_acknowledgement
+另外我自己也抓了包验证，https://baixiang.oss-cn-shenzhen.aliyuncs.com/dhcp/dhcp.png。
+
+我分享一个我最近遇到的问题:
+最近我们的设备增加了dhcp自动分配地址的功能。我把几台设备连到同个路由器上，但是发现每台设备最后分配到的ip都是一样的，我登录了路由器里面查看，显示的设备列表确实是ip都是一致的，mac地址是不一致的。。。。所以就觉得有点奇怪。不过这里要说明的是，设备的mac地址是我们自己程序里面设置的，网卡不带mac地址的----最后查看代码发现，我们设备代码是先启动了dhcp客户端，后面再设置了mac地址，这里就有问题了，所以，我把它倒过来，先设置mac地址，再启动dhcp客户端，这样就解决问题了。。。由于原先启动dhcp的时候还未设置mac地址，所以默认的mac地址都是一致的，所以获取的ip都是一致的

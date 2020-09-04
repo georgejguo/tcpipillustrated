@@ -1,0 +1,2 @@
+老师，之前接触openstack时候记得有个linuxbridge，请问它和OVS的区别主要是什么呢?
+答：brctl比ovs功能少多了.
