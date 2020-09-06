@@ -1,0 +1,5 @@
+讲的iptables
+k8s的kube-proxy 就是利用的iptables 做流量转发和负载均衡的，service 利用nat 将相应的流量转发到对应的pod中，另外iptables 有一个probability特性，可以设置probability的百分比是多少，从而实现负载均衡
+
+iptables文章：
+http://www.zsythink.net/archives/1199

@@ -1,0 +1,16 @@
+底层的物理网络设备组成的网络我们称为 Underlay 网络，而用于虚拟机和云中的这些技术组成的网络称为 Overlay 网络，这是一种基于物理网络的虚拟化网络实现。
+
+要对不同用户的网络进行隔离，解决 VLAN 数目有限的问题，需要通过 Overlay 的方式，常用的有GRE和VXLAN。
+GRE 是一种点对点的隧道模式，VXLAN 支持组播的隧道模式，它们都要在某个 Tunnel Endpoint 进行封装和解封装，来实现跨物理机的互通。
+OpenvSwitch 可以作为 Tunnel Endpoint，通过设置流表的规则，将虚拟机网络和物理机网络进行隔离、转换。
+
+是不是大的逻辑来说还是传统的7层网络模型，但是有了 OpenvSwitch 之后，就可以对数据包做任意的更改，所以在 IP 层跟 TCP 直间加一个 VXLAN 层数据包头，这里面有足够多的VXLAN ID (24位)，让 OpenvSwitch 去解决 VLAN ID 不足问题，知道这个 Tunnel ID 跟 VXLAN ID 有对应关系，但是不知道有 VXLAN ID 为什么还要 Tunnel ID。不知道理解的对不对
+作者回复: tunnel id是ovs的概念，vxlan id是vxlan协议的要求
+
+Vxlan简直就是SDN和网络厂商的救星啊!
+SDN目前看来分两条路线，一条是openflow路线，这条路线在控制层面主张用OF Controller集中控制，在转发层面使用多级流表让普通网络报文实现Service Chain，所以客户只需要买支持openflow的交换机，转发平面都不用更改。但是而传统交换机都不支持Openflow，全部不适用，这是网络厂商不愿意看到的结果，也是客户不愿意看到的结果；
+第二条线是NFV的路线，这条路线目前也是网络厂商主推的方向，其中重要因素就是Vxlan这个转发平面技术的提出。NFV是什么，NFV就是虚拟化，简单来说就是各种网络功能变成虚拟机。试想，所有虚拟机的vlan都能在服务器的虚拟交换机（OVS）上封装Vxlan，那么就天然的完成了多租户的隔离，同时通过控制vxlan隧道建立的路径又可以实现Service Chain的建立，而现有的网络设备只是要转发一下UDP数据包而已，这是多么完美的解决方案。
+链接：https://www.zhihu.com/question/24004028/answer/112632872
+
+linux主机与路由器建立隧道的方法
+https://www.cnblogs.com/wangicter/archive/2012/11/06/4767264.html
