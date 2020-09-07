@@ -10,6 +10,7 @@
 #sysctl -p
 #/sbin/iptables -P FORWARD ACCEPT
 
+ovs-vsctl del-br br0
 ovs-vsctl add-br br0
 ovs-vsctl show
 
