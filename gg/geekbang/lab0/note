@@ -1,0 +1,39 @@
+网桥br0就是网关
+# ovs-vsctl show
+b397a395-1e18-4c7c-92be-2ae5ab552abb
+    Bridge "br0"
+        Port "br0"
+            Interface "br0"
+                type: internal
+        Port "veth200pl15555"
+            Interface "veth200pl15555"
+    ovs_version: "2.9.5"
+在docker里面
+root@docker:/# ip a
+1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue state UNKNOWN group default qlen 1000
+    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
+    inet 127.0.0.1/8 scope host lo
+       valid_lft forever preferred_lft forever
+85: eth200@if86: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc noqueue state UP group default qlen 1000
+    link/ether 2a:48:19:47:3d:bf brd ff:ff:ff:ff:ff:ff
+    inet 192.168.100.200/24 scope global eth200
+       valid_lft forever preferred_lft forever
+root@docker:/# ping 192.168.100.1 //ping 不通, 因为网关ip地址没有设置。
+root@host# ip a
+84: br0: <BROADCAST,MULTICAST> mtu 1500 qdisc noop state DOWN group default qlen 1000
+    link/ether 52:c0:3a:05:45:4c brd ff:ff:ff:ff:ff:ff
+
+注意：在br0上的普通port上配置的IP地址是不起作用的
+root@host# ip addr add 192.168.100.1/24 dev br0
+root@host# ip link set br0 up
+
+84: br0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc noqueue state UNKNOWN group default qlen 1000
+    link/ether 52:c0:3a:05:45:4c brd ff:ff:ff:ff:ff:ff
+    inet 192.168.100.1/24 scope global br0
+       valid_lft forever preferred_lft forever
+    inet6 fe80::50c0:3aff:fe05:454c/64 scope link
+       valid_lft forever preferred_lft forever
+
+root@docker:/# ping 192.168.100.1 //ping通了
+而且ping 192.168.1.103(host主机地址enp0s8)和10.10.0.15(enp0s3) 也是通的
+但如果还需要进一步ping通外网，需要添加路由器?还是通过iptables设置网络地址转换
