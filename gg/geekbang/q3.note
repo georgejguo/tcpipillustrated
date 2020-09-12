@@ -1,0 +1,7 @@
+nat部分：
+(src client ip, port; dst server ip, port)进行哈希计算，看是不是一个新连接
+(src gw ip, random port; dst server ip, port)真正发出去的。
+(src server ip, port; dst gw ip, random port)从server回来的
+
+存储的对是(src client ip, port; dst server ip, port) 和 (src server ip, port; dst gw ip, random port)
+一去一回是有两个hash链表的。分别是(src client ip, port; dst server ip, port)和(src server ip, port; dst gw ip, random port)
